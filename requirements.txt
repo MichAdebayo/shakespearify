@@ -1,0 +1,6 @@
+streamlit
+transformers 
+torch 
+scipy
+TTS
+pip install git+https://github.com/huggingface/transformers.git
