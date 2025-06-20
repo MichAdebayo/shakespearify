@@ -86,3 +86,4 @@ pip-selfcheck.json
 Apollo.io
 
 __pycache__/
+*.csv
