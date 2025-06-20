@@ -84,3 +84,5 @@ pip-selfcheck.json
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,linux,venv,visualstudiocode
 Apollo.io
+
+__pycache__/
