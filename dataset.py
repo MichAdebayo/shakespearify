@@ -1,15 +1,11 @@
-import kagglehub
-import pandas as pd
+from gtts import gTTS
+import os
 
-# Download latest version
-path = kagglehub.dataset_download("garnavaurha/shakespearify")
+text = "To be or not to be, that is the question!"
+tts = gTTS(text=text, lang='en')
 
-print("Path to dataset files:", path)
+filename = "output.mp3"
+tts.save(filename)
 
-# Load the dataset into a pandas DataFrame
-df = pd.read_csv(f"{path}/final.csv")
-
-print("Dataset loaded successfully!")
-
-print("First few rows of the dataset:")
-print(df.head())
+# Play the mp3 file (Linux example)
+os.system(f"mpg123 {filename}")

@@ -1,6 +1,8 @@
 import streamlit as st
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import torch
+from gtts import gTTS
+import tempfile
 
 # Set Streamlit page config
 st.set_page_config(page_title="Shakespeare Style", page_icon="🎭")
@@ -53,3 +55,9 @@ if st.button("Translate to Shakespearean English"):
         )
         st.markdown("### 🎭 Translated to Shakespearean English")
         st.success(shakespeare_text)
+
+        # Text-to-Speech with gTTS and Streamlit audio player
+        tts = gTTS(text=shakespeare_text, lang='en')
+        with tempfile.NamedTemporaryFile(delete=True, suffix=".mp3") as fp:
+            tts.save(fp.name)
+            st.audio(fp.name, format='audio/mp3')
