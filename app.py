@@ -1,59 +1,55 @@
 import streamlit as st
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import torch
 
-# Streamlit config
-st.set_page_config(page_title="Shakespearify + FastSpeech2 TTS", page_icon="🎭")
+# Set Streamlit page config
+st.set_page_config(page_title="Shakespeare Style", page_icon="🎭")
 
-st.title("🎭 Shakespearify Modern English + Read Aloud")
-st.markdown("Convert modern English to Shakespearean style and hear it spoken aloud.")
+st.title("🎭 Shakespearean Translator")
 
-# Load Shakespeare model once
+st.image("shakespear.png", caption="William Shakespeare", use_container_width=True)
+
+# Load models (cache them)
 @st.cache_resource
-def load_shakespeare_model():
-    tokenizer = AutoTokenizer.from_pretrained("Gorilla115/t5-shakespearify-lite")
-    model = AutoModelForSeq2SeqLM.from_pretrained("Gorilla115/t5-shakespearify-lite")
-    return tokenizer, model
+def load_models():
+    # French to English model and tokenizer
+    fr_en_tokenizer = AutoTokenizer.from_pretrained("Helsinki-NLP/opus-mt-fr-en")
+    fr_en_model = AutoModelForSeq2SeqLM.from_pretrained("Helsinki-NLP/opus-mt-fr-en")
 
-# Load TTS pipeline once
-@st.cache_resource
-def load_tts_pipeline():
-    return pipeline("text-to-speech", model="facebook/fastspeech2-en-ljspeech")
+    # English to Shakespeare model and tokenizer
+    shakespeare_tokenizer = AutoTokenizer.from_pretrained("Gorilla115/t5-shakespearify-lite")
+    shakespeare_model = AutoModelForSeq2SeqLM.from_pretrained("Gorilla115/t5-shakespearify-lite")
 
-tokenizer, model = load_shakespeare_model()
-tts = load_tts_pipeline()
+    return fr_en_tokenizer, fr_en_model, shakespeare_tokenizer, shakespeare_model
 
-user_input = st.text_area("Enter modern English text:", "To be or not to be, that is the question.")
+fr_en_tokenizer, fr_en_model, shakespeare_tokenizer, shakespeare_model = load_models()
 
-if st.button("Shakespearify and Read Aloud"):
-    if not user_input.strip():
-        st.warning("Please enter some text.")
+# User input: French text
+user_input = st.text_area("Enter text:", "Je t'aime ma cherie")
+
+def translate(text, tokenizer, model, prefix=None):
+    # Prepare input with optional prefix (for models like T5)
+    if prefix:
+        text = f"{prefix}: {text}"
+    inputs = tokenizer.encode(text, return_tensors="pt", max_length=512, truncation=True)
+    with torch.no_grad():
+        outputs = model.generate(inputs, max_length=150, num_beams=5, early_stopping=True)
+    result = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    return result
+
+if st.button("Translate to Shakespearean English"):
+    if user_input.strip() == "":
+        st.warning("Please enter some French text.")
     else:
-        # Convert to Shakespearean
-        input_text = f"translate English to Shakespearean: {user_input}"
-        inputs = tokenizer.encode(input_text, return_tensors="pt", max_length=512, truncation=True)
-        with torch.no_grad():
-            outputs = model.generate(inputs, max_length=150, num_beams=5, early_stopping=True)
-        shakespeare_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        # Step 1: French -> English
+        english_text = translate(user_input, fr_en_tokenizer, fr_en_model)
 
-        st.markdown("### 📝 Shakespearean Style Output")
+        # Step 2: English -> Shakespearean English
+        shakespeare_text = translate(
+            english_text,
+            shakespeare_tokenizer,
+            shakespeare_model,
+            prefix="translate:"
+        )
+        st.markdown("### 🎭 Translated to Shakespearean English")
         st.success(shakespeare_text)
-
-        # Generate audio from Shakespearean text
-        audio_output = tts(shakespeare_text)
-
-        # The pipeline returns dict with "wav" key containing numpy array of audio
-        audio_array = audio_output["wav"]
-        # Save audio to temp file to play in Streamlit
-        import tempfile
-        import soundfile as sf
-
-        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
-            sf.write(f.name, audio_array, samplerate=22050)  # default sample rate for this model
-            temp_audio_path = f.name
-
-        audio_bytes = open(temp_audio_path, "rb").read()
-        st.audio(audio_bytes, format="audio/wav")
-
-        import os
-        os.unlink(temp_audio_path)
