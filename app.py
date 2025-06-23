@@ -9,7 +9,9 @@ st.set_page_config(page_title="Shakespeare Style", page_icon="🎭")
 
 st.title("🎭 Shakespearean Translator")
 
-st.image("shakespear.png", caption="William Shakespeare", use_container_width=True)
+# Placeholder for image to allow swapping later
+image_placeholder = st.empty()
+image_placeholder.image("shakespear.png", use_container_width=True)
 
 # Load models (cache them)
 @st.cache_resource
@@ -53,11 +55,17 @@ if st.button("Translate to Shakespearean English"):
             shakespeare_model,
             prefix="translate:"
         )
+
         st.markdown("### 🎭 Translated to Shakespearean English")
         st.success(shakespeare_text)
 
-        # Text-to-Speech with gTTS and Streamlit audio player
+        # Generate speech and show GIF in sync
         tts = gTTS(text=shakespeare_text, lang='en')
         with tempfile.NamedTemporaryFile(delete=True, suffix=".mp3") as fp:
             tts.save(fp.name)
+
+            # Replace static image with talking GIF
+            image_placeholder.image("shakespeartalking.gif", caption="Shakespeare Speaks", use_container_width=True)
+
+            # Play audio
             st.audio(fp.name, format='audio/mp3')
