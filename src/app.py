@@ -75,5 +75,5 @@ if st.button("Translate to Shakespearean English"):
         tts = gTTS(text=shakespeare_text, lang='en')
         with tempfile.NamedTemporaryFile(delete=True, suffix=".mp3") as fp:
             tts.save(fp.name)
-            image_placeholder.image("img/shakespeartalking.gif", use_container_width=True)
+            image_placeholder.image("img/shakespeartalking.gif", caption="Shakespeare Speaks", use_container_width=True)
             st.audio(fp.name, format='audio/mp3')

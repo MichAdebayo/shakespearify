@@ -91,3 +91,4 @@ __pycache__/
 .ruff_cache/
 data/
 .pytest_cache/
+t5-shakespe/
