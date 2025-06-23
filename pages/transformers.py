@@ -2,7 +2,7 @@ import streamlit as st
 
 st.set_page_config(page_title="How Transformers Work", page_icon="🧠")
 
-page = st.sidebar.radio("Navigate", ["Overview", "Self-Attention", "T5-small", "Workflow", "Summary"])
+page = st.sidebar.radio("Navigate", ["Overview", "Self-Attention", "T5-small", "Workflow"])
 
 if page == "Overview":
     st.title("🧠 How Transformers Work: Overview")
@@ -41,16 +41,17 @@ elif page == "Self-Attention":
     ```
 
     This process is repeated in parallel using multiple attention heads — known as **Multi-Head Attention** — allowing the model to capture different types of relationships in the sequence.
-
-    #### In T5-small:
-    - The encoder uses self-attention to model relationships **within the input**.
-    - The decoder uses **masked self-attention** to prevent looking ahead.
-    - The decoder also uses **cross-attention** to incorporate information from the encoder.
     """)
 
 elif page == "T5-small":
     st.title("🧩 What is T5-small?")
     st.markdown("""
+    #### In T5-small:
+    - The encoder uses self-attention to model relationships **within the input**.
+    - The decoder uses **masked self-attention** to prevent looking ahead.
+    - The decoder also uses **cross-attention** to incorporate information from the encoder.
+    - T5 reformulates every NLP task as text-to-text.
+    - T5-small is ideal for lightweight inference and prototyping.
     **T5** stands for **Text-to-Text Transfer Transformer**. It was introduced by Google in the paper *“Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer.”*
 
     **T5-small** is a compact version of T5 for quicker inference and lower memory usage.
@@ -82,13 +83,4 @@ elif page == "Workflow":
 
     5. **Output**:
         - A generated sequence like `A quick brown fox jumps a lazy dog.`
-    """)
-
-elif page == "Summary":
-    st.title("📚 Summary")
-    st.markdown("""
-    - Transformers power modern NLP.
-    - T5 reformulates every NLP task as text-to-text.
-    - T5-small is ideal for lightweight inference and prototyping.
-    - Self-attention is the core innovation enabling contextual understanding.
     """)

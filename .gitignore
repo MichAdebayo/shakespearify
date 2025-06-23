@@ -88,3 +88,4 @@ Apollo.io
 __pycache__/
 *.csv
 *.mp3
+.ruff_cache/
