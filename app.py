@@ -11,7 +11,7 @@ st.title("🎭 Shakespearean Translator")
 
 # Placeholder for image to allow swapping later
 image_placeholder = st.empty()
-image_placeholder.image("shakespear.png", use_container_width=True)
+image_placeholder.image("img/shakespear.png", use_container_width=True)
 
 # Load models (cache them)
 @st.cache_resource
@@ -65,7 +65,7 @@ if st.button("Translate to Shakespearean English"):
             tts.save(fp.name)
 
             # Replace static image with talking GIF
-            image_placeholder.image("shakespeartalking.gif", caption="Shakespeare Speaks", use_container_width=True)
+            image_placeholder.image("img/shakespeartalking.gif", caption="Shakespeare Speaks", use_container_width=True)
 
             # Play audio
             st.audio(fp.name, format='audio/mp3')
