@@ -4,68 +4,76 @@ import torch
 from gtts import gTTS
 import tempfile
 
-# Set Streamlit page config
 st.set_page_config(page_title="Shakespeare Style", page_icon="🎭")
 
 st.title("🎭 Shakespearean Translator")
 
-# Placeholder for image to allow swapping later
 image_placeholder = st.empty()
 image_placeholder.image("img/shakespear.png", use_container_width=True)
 
-# Load models (cache them)
 @st.cache_resource
 def load_models():
-    # French to English model and tokenizer
+    # Online pretrained models
     fr_en_tokenizer = AutoTokenizer.from_pretrained("Helsinki-NLP/opus-mt-fr-en")
     fr_en_model = AutoModelForSeq2SeqLM.from_pretrained("Helsinki-NLP/opus-mt-fr-en")
 
-    # English to Shakespeare model and tokenizer
-    shakespeare_tokenizer = AutoTokenizer.from_pretrained("Gorilla115/t5-shakespearify-lite")
-    shakespeare_model = AutoModelForSeq2SeqLM.from_pretrained("Gorilla115/t5-shakespearify-lite")
+    shakespeare_tokenizer_online = AutoTokenizer.from_pretrained("Gorilla115/t5-shakespearify-lite")
+    shakespeare_model_online = AutoModelForSeq2SeqLM.from_pretrained("Gorilla115/t5-shakespearify-lite")
 
-    return fr_en_tokenizer, fr_en_model, shakespeare_tokenizer, shakespeare_model
+    # Your locally trained Shakespeare model (assumed saved locally in 'local_t5_shakespeare')
+    shakespeare_tokenizer_local = AutoTokenizer.from_pretrained("t5-shakespeare")
+    shakespeare_model_local = AutoModelForSeq2SeqLM.from_pretrained("t5-shakespeare")
 
-fr_en_tokenizer, fr_en_model, shakespeare_tokenizer, shakespeare_model = load_models()
+    return (fr_en_tokenizer, fr_en_model,
+            shakespeare_tokenizer_online, shakespeare_model_online,
+            shakespeare_tokenizer_local, shakespeare_model_local)
 
-# User input: French text
+(fr_en_tokenizer, fr_en_model,
+ shakespeare_tokenizer_online, shakespeare_model_online,
+ shakespeare_tokenizer_local, shakespeare_model_local) = load_models()
+
 user_input = st.text_area("Enter text:", "Je t'aime ma cherie")
 
+# Let user pick which Shakespeare model to use
+model_choice = st.radio(
+    "Choose Shakespeare model:",
+    ("Online pretrained model", "My trained T5 Shakespeare model")
+)
+
 def translate(text, tokenizer, model, prefix=None):
-    # Prepare input with optional prefix (for models like T5)
     if prefix:
         text = f"{prefix}: {text}"
     inputs = tokenizer.encode(text, return_tensors="pt", max_length=512, truncation=True)
     with torch.no_grad():
         outputs = model.generate(inputs, max_length=150, num_beams=5, early_stopping=True)
-    result = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    return result
+    return tokenizer.decode(outputs[0], skip_special_tokens=True)
 
 if st.button("Translate to Shakespearean English"):
     if user_input.strip() == "":
         st.warning("Please enter some French text.")
     else:
-        # Step 1: French -> English
         english_text = translate(user_input, fr_en_tokenizer, fr_en_model)
 
-        # Step 2: English -> Shakespearean English
-        shakespeare_text = translate(
-            english_text,
-            shakespeare_tokenizer,
-            shakespeare_model,
-            prefix="translate:"
-        )
+        if model_choice == "Online pretrained model":
+            shakespeare_text = translate(
+                english_text,
+                shakespeare_tokenizer_online,
+                shakespeare_model_online,
+                prefix="translate:"
+            )
+        else:
+            shakespeare_text = translate(
+                english_text,
+                shakespeare_tokenizer_local,
+                shakespeare_model_local,
+                prefix="translate:"
+            )
 
         st.markdown("### 🎭 Translated to Shakespearean English")
         st.success(shakespeare_text)
 
-        # Generate speech and show GIF in sync
         tts = gTTS(text=shakespeare_text, lang='en')
         with tempfile.NamedTemporaryFile(delete=True, suffix=".mp3") as fp:
             tts.save(fp.name)
-
-            # Replace static image with talking GIF
-            image_placeholder.image("img/shakespeartalking.gif", caption="Shakespeare Speaks", use_container_width=True)
-
-            # Play audio
+            image_placeholder.image("img/shakespeartalking.gif", use_container_width=True)
             st.audio(fp.name, format='audio/mp3')
