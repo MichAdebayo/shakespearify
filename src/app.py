@@ -3,6 +3,7 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import torch
 from gtts import gTTS
 import tempfile
+from postprocessing import postprocess_shakespeare
 
 st.set_page_config(page_title="Shakespeare Style", page_icon="🎭")
 st.title("🎭 Shakespearean Translator")
@@ -88,6 +89,8 @@ if st.button("Translate to Shakespearean English"):
                 shakespeare_model_local,
                 prefix="translate"
             )
+            shakespeare_text = postprocess_shakespeare(shakespeare_text)
+        
 
         # Step 3: Show result
         st.markdown("### 🎭 Translated to Shakespearean English")
