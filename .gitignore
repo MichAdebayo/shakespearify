@@ -92,3 +92,4 @@ __pycache__/
 data/
 .pytest_cache/
 t5-shakespeare/
+t5-shakespeare-2/models/t5-shakespeare/
