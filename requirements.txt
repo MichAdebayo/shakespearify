@@ -1,0 +1,7 @@
+streamlit
+transformers 
+torch 
+scipy
+ruff
+pytest
+langdetect
