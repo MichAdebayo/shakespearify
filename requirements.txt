@@ -4,3 +4,4 @@ torch
 scipy
 ruff
 pytest
+langdetect
