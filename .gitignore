@@ -95,7 +95,6 @@ data/
 t5-shakespeare/
 t5-shakespeare2/
 notebooks/
-img/
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,linux,venv,visualstudiocode
 Apollo.io
