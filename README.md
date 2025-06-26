@@ -61,7 +61,7 @@ shakespearify/
 ```mermaid
 graph TD
     A[Modern Text Input] --> B[Pre-processing]
-    B --> C[T5 Model]
+    B --> C[BART Model]
     C --> D[Post-processing]
     D --> E[Shakespearean Text]
     E --> F[Speech Synthesis]
@@ -104,23 +104,33 @@ graph TD
 ### Sample Translations
 
 1. **Modern**: "Indeed, and I am happy about that."  
+
    **Shakespeare**: "Marry, And I am glad of it with all my heart:"  
+
    **Model**: "Forsooth, and I am gleeful of that."
 
 2. **Modern**: "What, by God, may she do? She may marry a king, a bachelor, a handsome young man. Certainly, your grandmother had a worse match."  
+
    **Shakespeare**: "What, marry, may she? Marry with a king, A bachelor, a handsome stripling too. I wis, your grandam had a worser match."  
+
    **Model**: "What, By my faith, may she dost? She may marry a Monarch, a bachelor, a handsome youthful gentleman. Certainly, thy grandmother had a worse match."
 
 3. **Modern**: "That sounds good to me."  
+
    **Shakespeare**: "It likes me well."  
+
    **Model**: "That sounds well to me."
 
 4. **Modern**: "I came as an ambassador from Edward, but I return as his sworn and deadly enemy. He told me to take care of his marriage, but he'll have war instead."
+   
    **Shakespeare**: "I came from Edward as ambassador,  But I return his sworn and mortal foe:  Matter of marriage was the charge he gave me,  But dreadful war shall answer his demand."
+   
    **Model**: "I came as an ambassador from Edward,   But I return as his sworn and fatally foe.   He told me to take care of his marriage, but he 'll hast strife."
 
 5. **Modern**: "I'll only irritate you if I stay. Let me go."
+
    **Shakespeare**: "I chafe you, if I tarry. Let me go."
+
    **Model**: "I will irritate thou if I stay. Let me hie."
 
 ---
