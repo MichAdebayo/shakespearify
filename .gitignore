@@ -60,6 +60,7 @@ Temporary Items
 [Ll]ocal
 [Ss]cripts
 pyvenv.cfg
+.venv/
 .venv
 pip-selfcheck.json
 
@@ -82,10 +83,10 @@ pip-selfcheck.json
 .history
 .ionide
 
-# End of https://www.toptal.com/developers/gitignore/api/macos,linux,venv,visualstudiocode
-Apollo.io
-
 __pycache__/
+*__pycache__
+src/__pycache__
+*.pyc
 *.csv
 *.mp3
 .ruff_cache/
@@ -93,6 +94,9 @@ data/
 .pytest_cache/
 t5-shakespeare/
 t5-shakespeare2/
-t5-shakespeare2/
 notebooks/
 img/
+
+# End of https://www.toptal.com/developers/gitignore/api/macos,linux,venv,visualstudiocode
+Apollo.io
+
